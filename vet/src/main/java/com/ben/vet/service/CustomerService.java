@@ -23,6 +23,8 @@ public class CustomerService { // Removed "implements com.ben.vet.service.Custom
         this.dogService = dogService;
     }
 
+
+
     public CustomerResponseDTO registerCustomer(CustomerRequestDTO customerRequestDTO) { // Changed to public access
         Customer customer = new Customer();
         customer.setName(customerRequestDTO.getName());

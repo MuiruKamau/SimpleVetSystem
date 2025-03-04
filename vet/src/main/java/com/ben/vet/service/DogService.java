@@ -28,17 +28,23 @@ public class DogService { // Removed "implements com.ben.vet.service.DogService"
         this.customerRepository = customerRepository;
     }
 
-    public DogResponseDTO registerDog(DogRegistrationRequestDTO registrationRequestDTO) { // Changed to public access
+    public DogResponseDTO registerDog(DogRegistrationRequestDTO registrationRequestDTO) {
         Dog dog = new Dog();
         dog.setName(registrationRequestDTO.getName());
         dog.setAge(registrationRequestDTO.getAge());
         dog.setBreed(registrationRequestDTO.getBreed());
         dog.ensureAgeIsSet();
 
-        Customer customer = customerRepository.findById(registrationRequestDTO.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found: " + registrationRequestDTO.getCustomerId()));
-        dog.setCustomer(customer);
+        Long customerId = registrationRequestDTO.getCustomerId();
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found: " + customerId));
 
+        // **NEW LOGIC: Check if customer is active**
+        if (!customer.isActive()) {
+            throw new IllegalStateException("Cannot register dog for inactive customer: " + customer.getName() + " (ID: " + customerId + ")");
+        }
+
+        dog.setCustomer(customer);
         Dog savedDog = dogRepository.save(dog);
         return mapToDogResponseDTO(savedDog);
     }

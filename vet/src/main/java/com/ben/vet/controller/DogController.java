@@ -24,15 +24,26 @@ public class DogController {
     public DogController(DogService dogService) {
         this.dogService = dogService;
     }
-
     @PostMapping
     public ResponseEntity<Map<String, Object>> registerDog(@RequestBody DogRegistrationRequestDTO registrationRequestDTO) {
-        DogResponseDTO dogResponseDTO = dogService.registerDog(registrationRequestDTO);
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("message", "Dog registered successfully");
-        responseMap.put("status", HttpStatus.CREATED.value());
-        responseMap.put("data", dogResponseDTO); // Include DogResponseDTO as "data"
-        return new ResponseEntity<>(responseMap, HttpStatus.CREATED);
+        try {
+            DogResponseDTO dogResponseDTO = dogService.registerDog(registrationRequestDTO);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("message", "Dog registered successfully");
+            responseMap.put("status", HttpStatus.CREATED.value());
+            responseMap.put("data", dogResponseDTO);
+            return new ResponseEntity<>(responseMap, HttpStatus.CREATED);
+        } catch (IllegalStateException e) { // **Catch the specific IllegalStateException**
+            Map<String, Object> errorResponseMap = new HashMap<>();
+            errorResponseMap.put("message", e.getMessage()); // Use the exception message
+            errorResponseMap.put("status", HttpStatus.BAD_REQUEST.value()); // Or HttpStatus.CONFLICT (409)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseMap); // Return 400 Bad Request
+        } catch (RuntimeException e) { // Catch other RuntimeExceptions (like "Customer not found")
+            Map<String, Object> errorResponseMap = new HashMap<>();
+            errorResponseMap.put("message", "Error during dog registration");
+            errorResponseMap.put("status", HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseMap);
+        }
     }
 
     @GetMapping("/search")
