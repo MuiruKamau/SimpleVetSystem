@@ -4,7 +4,7 @@ import com.ben.vet.dto.CustomerRequestDTO;
 import com.ben.vet.dto.CustomerResponseDTO;
 import com.ben.vet.model.Customer;
 import com.ben.vet.repository.CustomerRepository;
-import com.ben.vet.service.DogService;
+import com.ben.vet.dog.DogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CustomerService { // Removed "implements com.ben.vet.service.CustomerService"
+public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final DogService dogService;

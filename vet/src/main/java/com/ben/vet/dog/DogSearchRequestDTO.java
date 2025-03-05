@@ -1,4 +1,4 @@
-package com.ben.vet.dto;
+package com.ben.vet.dog;
 
 import lombok.Data;
 

@@ -1,11 +1,9 @@
-package com.ben.vet.controller;
+package com.ben.vet.dog;
 
-import com.ben.vet.dto.DogRegistrationRequestDTO;
-import com.ben.vet.dto.DogResponseDTO;
-import com.ben.vet.dto.DogSearchRequestDTO;
-import com.ben.vet.service.DogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,13 +45,17 @@ public class DogController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchDogs(DogSearchRequestDTO searchRequestDTO) {
-        Page<DogResponseDTO> dogPage = dogService.searchDogs(searchRequestDTO);
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("message", "Dog search results");
-        responseMap.put("status", HttpStatus.OK.value());
-        responseMap.put("data", dogPage); // Include Page<DogResponseDTO> as "data"
-        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+    public ResponseEntity<?> searchDogs(@RequestParam(required = false) String customerName,
+                                                          @RequestParam(required = false) String breed, @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size) {
+//        Page<DogResponseDTO> dogPage = dogService.searchDogs(searchRequestDTO);
+//        Map<String, Object> responseMap = new HashMap<>();
+//        responseMap.put("message", "Dog search results");
+//        responseMap.put("status", HttpStatus.OK.value());
+//        responseMap.put("data", dogPage); // Include Page<DogResponseDTO> as "data"
+//        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(dogService.searchDogss(customerName, breed, pageable ));
     }
 
     @GetMapping("/{dogId}")
